@@ -12,7 +12,6 @@
 
 从第一条也可以看出，没有使用var声明的变量是不会参与变量提升的，不然结果应该是undefined，看到最好的一个解释是：由于该变量没有使用var声明，就不会被放在预解析阶段的AO（活动对象，详情参考javascript深入之执行上下文栈）中
 
-
 上面说到不用var会被自动创建为全局变量，那么什么时候会被创建为全局变量呢
 
 
@@ -30,11 +29,9 @@
         a = 2
     }
     fn()
-    console.log(a)  //a is not defined
-    
+    console.log(a)  //a is not defined    
 
 使用var 和不使用var 还有个区别
-
     var a = 1
     b = 2
     console.log(Object.getOwnPropertyDescriptor(window, 'a'))  
@@ -43,6 +40,7 @@
     console.log(Object.getOwnPropertyDescriptor(window, 'b'))
     //{value: 2, writable: true, enumerable: true, configurable: true}
 通过结果的比较可以发现，未使用 var 声明的全局变量的configurable 属性是 true(同样，直接通过window全局对象添加的变量，改属性也是true)，而使用var声明的变量，该属性是默认为false，也就是说，未通过 var 声明的变量是可以删除的，如下：
+
     delete a
     // false
     
