@@ -1,0 +1,51 @@
+分享下不用var声明变量的一点心得
+
+不用var声明的变量会被自动隐式的创建为全局变量
+
+    function fn(){
+        a = 2
+    }
+    fn()
+    console.log(a)  //2
+    
+根据js的作用域，函数外面是无法获得函数里面的变量的（除非使用闭包），但是这里做到了，只是因为js会将没有使用var声明的变量自动的创建为全局变量。
+
+
+从第一条也可以看出，没有使用var声明的变量是不会参与变量提升的，不然结果应该是undefined，看到最好的一个解释是：由于该变量没有使用var声明，就不会被放在预解析阶段的AO（活动对象，详情参考javascript深入之执行上下文栈）中
+
+
+上面说到不用var会被自动创建为全局变量，那么什么时候会被创建为全局变量呢
+
+
+     function fn(){
+        console.log(a)  //a is not defined
+        a = 2
+    }
+    fn()
+函数的执行分为代码预计解析阶段和执行阶段，在预解析阶段会进行变量提升，而不用var声明的变量不参与变量提升，因此进入执行阶段，执行阶段按照代码的顺序执行，先执行打印语句，发现a未定义，然后往下执行a=2，这个时候才会创建为全局变量，但因为上面报错，导致程序执行中止，所以这里也没能生产全局变量
+
+严格模式下是不允许自动隐式的创建为全局变量
+
+    `use strict`
+    function fn(){
+        a = 2
+    }
+    fn()
+    console.log(a)  //a is not defined
+    
+
+使用var 和不使用var 还有个区别
+
+    var a = 1
+    b = 2
+    console.log(Object.getOwnPropertyDescriptor(window, 'a'))  
+    //{value: 1, writable: true, enumerable: true, configurable: false}
+    
+    console.log(Object.getOwnPropertyDescriptor(window, 'b'))
+    //{value: 2, writable: true, enumerable: true, configurable: true}
+通过结果的比较可以发现，未使用 var 声明的全局变量的configurable 属性是 true(同样，直接通过window全局对象添加的变量，改属性也是true)，而使用var声明的变量，该属性是默认为false，也就是说，未通过 var 声明的变量是可以删除的，如下：
+    delete a
+    // false
+    
+    delete b
+    // true
